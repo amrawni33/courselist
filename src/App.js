@@ -1,25 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+import { Component } from "react";
+import CourseForm from "./Components/CourseForm/CourseForm";
+import CourseList from "./Components/CourseList/CourseList";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+class App extends Component {
+  state = {
+    courses: [
+      { name: 'HTML' },
+      { name: 'CSS' },
+      { name: 'PHP' },
+    ],
+    current: ''
+  }
+
+  courseName
+  CourseNameUpdate = (e) => {
+    this.setState({
+      current: e.target.value
+    })
+  }
+
+  handleSubmit = (e) => {
+    e.preventDefault()
+    let current = this.state.current;
+    let courses = this.state.courses;
+    courses.push({ name: current })
+    this.setState({ courses, current: '' })
+  }
+
+  render() {
+    const { courses } = this.state
+    const courseList = courses.map((course, index) => {
+      return (
+        <CourseList courseName={course.name} key={index} />
+      )
+    });
+    return (
+      <div className="App">
+        <div>Add Course </div>
+        <CourseForm current={this.state.current} CourseNameUpdate={this.CourseNameUpdate} handleSubmit={this.handleSubmit} />
+        <ul>{courseList}</ul>
+      </div>
+    );
+  }
 }
 
 export default App;
