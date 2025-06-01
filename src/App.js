@@ -2,7 +2,6 @@ import { Component } from "react";
 import CourseForm from "./Components/CourseForm/CourseForm";
 import CourseList from "./Components/CourseList/CourseList";
 
-
 class App extends Component {
   state = {
     courses: [
@@ -13,32 +12,54 @@ class App extends Component {
     current: ''
   }
 
-  courseName
   CourseNameUpdate = (e) => {
     this.setState({
       current: e.target.value
-    })
+    });
   }
 
   handleSubmit = (e) => {
-    e.preventDefault()
-    let current = this.state.current;
-    let courses = this.state.courses;
-    courses.push({ name: current })
-    this.setState({ courses, current: '' })
+    e.preventDefault();
+    const { current, courses } = this.state;
+    if (current.trim() === '') return;
+
+    const updatedCourses = [...courses, { name: current }];
+    this.setState({ courses: updatedCourses, current: '' });
+  }
+
+  deleteCourse = (index) => {
+    const courses = [...this.state.courses];
+    courses.splice(index, 1);
+    this.setState({ courses });
+  }
+
+  updateCourse = (index, value) => {
+    const courses = [...this.state.courses];
+    courses[index] = { name: value };
+    this.setState({ courses });
   }
 
   render() {
-    const { courses } = this.state
-    const courseList = courses.map((course, index) => {
-      return (
-        <CourseList courseName={course.name} key={index} />
-      )
-    });
+    const { courses, current } = this.state;
+
+    const courseList = courses.map((course, index) => (
+      <CourseList
+        key={index}
+        index={index}
+        courseName={course.name}
+        deleteCourse={this.deleteCourse}
+        updateCourse={this.updateCourse}
+      />
+    ));
+
     return (
       <div className="App">
-        <div>Add Course </div>
-        <CourseForm current={this.state.current} CourseNameUpdate={this.CourseNameUpdate} handleSubmit={this.handleSubmit} />
+        <h2>Add Course</h2>
+        <CourseForm
+          current={current}
+          CourseNameUpdate={this.CourseNameUpdate}
+          handleSubmit={this.handleSubmit}
+        />
         <ul>{courseList}</ul>
       </div>
     );
